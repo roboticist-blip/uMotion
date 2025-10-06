@@ -12,11 +12,7 @@ uMotion motion
 void setup() {
   Serial.begin(115200);
   Serial.println("μMotion Example Starting...");
-  
-  // Initialize μMotion library
   motion.begin();
-
-  // Set detection mode and threshold
   // Modes: RAW_DIFF or MOTION_COUNT
   motion.setMode(MOTION_COUNT);
   motion.setThreshold(25);
@@ -27,7 +23,5 @@ void setup() {
 void loop() {
   // Process motion depending on selected mode
   motion.process();
-
-  // Optional delay (can be tuned for speed vs. stability)
   delay(500);
 }
