@@ -2,6 +2,8 @@
 #include "camera_pins.h"
 #include <uMotion.h>
 
+// Select your board in board_config.h first //
+
 uMotion motion;
 void setup() {
   Serial.begin(115200);
