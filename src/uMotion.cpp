@@ -35,9 +35,8 @@ bool uMotion::begin(framesize_t size, pixformat_t format) {
     Serial.println("[μMotion] Camera init failed!");
     return false;
   }
-
-  // Allocate previous frame buffer
-  int frame_bytes = 160 * 120; // QQVGA assumed for now
+  
+  int frame_bytes = 160 * 120; // QQVGA assumed
   prevFrame = (uint8_t*)malloc(frame_bytes);
   if (!prevFrame) {
     Serial.println("[μMotion] Failed to allocate frame buffer!");
@@ -67,8 +66,7 @@ void uMotion::update() {
     printRawDiff();
   else
     calculateDifference();
-
-  // Copy to prev
+  
   memcpy(prevFrame, fb->buf, fb->len);
   esp_camera_fb_return(fb);
 
