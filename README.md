@@ -24,6 +24,8 @@ It supports multiple detection modes, adjustable thresholds, and simplifies came
 git clone https://github.com/roboticist-blip/μMotion
 ```
 ---
+**How uMotion is Different from OpenCV Motion Detection**
+
 
 OpenCV is a general-purpose computer vision library.
 uMotion is a motion intelligence engine purpose-built for embedded vision, real-time performance, and AI-assisted decision systems.
