@@ -9,6 +9,8 @@
 
 uMotion motion
 
+// Select your board in board_config.h first //
+
 void setup() {
   Serial.begin(115200);
   Serial.println("μMotion Example Starting...");
