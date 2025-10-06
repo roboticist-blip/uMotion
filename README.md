@@ -1,4 +1,4 @@
-# uMotion
+# μMotion
 
 μMotion is a **lightweight, easy-to-use motion detection library** for Arduino boards using ESP32 cameras.  
 It supports multiple detection modes, adjustable thresholds, and simplifies camera setup across different ESP32 board configurations.
@@ -24,11 +24,11 @@ It supports multiple detection modes, adjustable thresholds, and simplifies came
 git clone https://github.com/roboticist-blip/μMotion
 ```
 ---
-**How uMotion is Different from OpenCV Motion Detection**
+**How μMotion is Different from OpenCV Motion Detection**
 
 
 OpenCV is a general-purpose computer vision library.
-uMotion is a motion intelligence engine purpose-built for embedded vision, real-time performance, and AI-assisted decision systems.
+μMotion is a motion intelligence engine purpose-built for embedded vision, real-time performance, and AI-assisted decision systems.
 Built for the edge. Faster than OpenCV.
 
 Open for contributions and test !
