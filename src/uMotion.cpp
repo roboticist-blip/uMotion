@@ -3,6 +3,15 @@
 #include "camera_pins.h"
 #include <Arduino.h>
 
+// ==========================
+// Camera vs Processing Sizes
+// ==========================
+#define CAM_W   160
+#define CAM_H   120
+
+#define PROC_W   96
+#define PROC_H   96
+
 bool uMotion::begin(framesize_t size, pixformat_t format) {
   camera_config_t config;
   config.ledc_channel = LEDC_CHANNEL_0;
@@ -24,8 +33,8 @@ bool uMotion::begin(framesize_t size, pixformat_t format) {
   config.pin_pwdn = PWDN_GPIO_NUM;
   config.pin_reset = RESET_GPIO_NUM;
   config.xclk_freq_hz = 20000000;
-  config.frame_size = size;
-  config.pixel_format = format;
+  config.frame_size = size;                 // still QQVGA
+  config.pixel_format = format;             // grayscale
   config.grab_mode = CAMERA_GRAB_WHEN_EMPTY;
   config.fb_location = CAMERA_FB_IN_PSRAM;
   config.jpeg_quality = 12;
@@ -35,14 +44,14 @@ bool uMotion::begin(framesize_t size, pixformat_t format) {
     Serial.println("[μMotion] Camera init failed!");
     return false;
   }
-  
-  int frame_bytes = 160 * 120; // QQVGA assumed
-  prevFrame = (uint8_t*)malloc(frame_bytes);
+
+  // Allocate previous processed frame
+  prevFrame = (uint8_t*)malloc(PROC_W * PROC_H);
   if (!prevFrame) {
     Serial.println("[μMotion] Failed to allocate frame buffer!");
     return false;
   }
-  memset(prevFrame, 0, frame_bytes);
+  memset(prevFrame, 0, PROC_W * PROC_H);
 
   frame_count = 0;
   t_last_log = millis();
@@ -62,50 +71,65 @@ void uMotion::update() {
 
   motion_pixels = 0;
 
+  // ==========================
+  // Downsample QQVGA → 96x96
+  // ==========================
+  for (int y = 0; y < PROC_H; y++) {
+    int src_y = y * CAM_H / PROC_H;
+    for (int x = 0; x < PROC_W; x++) {
+      int src_x = x * CAM_W / PROC_W;
+      procFrame[y * PROC_W + x] =
+        fb->buf[src_y * CAM_W + src_x];
+    }
+  }
+
   if (mode == MODE_RAW)
     printRawDiff();
   else
     calculateDifference();
-  
-  memcpy(prevFrame, fb->buf, fb->len);
+
+  memcpy(prevFrame, procFrame, PROC_W * PROC_H);
   esp_camera_fb_return(fb);
 
   unsigned long t1 = micros();
   latency = t1 - t0;
 
-  motion_ratio = (float)motion_pixels / (160.0f * 120.0f);
+  motion_ratio = (float)motion_pixels / (PROC_W * PROC_H);
   motion = (motion_pixels > threshold);
 
   frame_count++;
   if (millis() - t_last_log > 5000) {
     float fps = frame_count / ((millis() - t_last_log) / 1000.0f);
-    Serial.printf("[μMotion] fps=%.2f, latency=%lu us, heap=%u, psram=%u\n",
-                  fps, latency, (unsigned)ESP.getFreeHeap(), (unsigned)ESP.getFreePsram());
+    Serial.printf(
+      "[μMotion] fps=%.2f, latency=%lu us, heap=%u, psram=%u\n",
+      fps, latency,
+      (unsigned)ESP.getFreeHeap(),
+      (unsigned)ESP.getFreePsram()
+    );
     frame_count = 0;
     t_last_log = millis();
   }
 }
 
 void uMotion::calculateDifference() {
-  for (int y = 0; y < 120; y++) {
-    for (int x = 0; x < 160; x++) {
-      int idx = y * 160 + x;
-      if (abs(fb->buf[idx] - prevFrame[idx]) > threshold) {
+  for (int y = 0; y < PROC_H; y++) {
+    for (int x = 0; x < PROC_W; x++) {
+      int idx = y * PROC_W + x;
+      if (abs(procFrame[idx] - prevFrame[idx]) > threshold) {
         motion_pixels++;
       }
     }
   }
 
   Serial.printf("motion_pixels=%d, ratio=%.4f\n",
-                motion_pixels,
-                motion_ratio);
+                motion_pixels, motion_ratio);
 }
 
 void uMotion::printRawDiff() {
-  for (int y = 0; y < 120; y++) {
-    for (int x = 0; x < 160; x++) {
-      int idx = y * 160 + x;
-      if (abs(fb->buf[idx] - prevFrame[idx]) > threshold)
+  for (int y = 0; y < PROC_H; y++) {
+    for (int x = 0; x < PROC_W; x++) {
+      int idx = y * PROC_W + x;
+      if (abs(procFrame[idx] - prevFrame[idx]) > threshold)
         Serial.print(".");
       else
         Serial.print(" ");
