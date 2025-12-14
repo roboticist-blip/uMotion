@@ -3,9 +3,6 @@
 #include "camera_pins.h"
 #include <Arduino.h>
 
-// ==========================
-// Camera vs Processing Sizes
-// ==========================
 #define CAM_W   160
 #define CAM_H   120
 
@@ -78,8 +75,8 @@ void uMotion::update() {
     int src_y = y * CAM_H / PROC_H;
     for (int x = 0; x < PROC_W; x++) {
       int src_x = x * CAM_W / PROC_W;
-      procFrame[y * PROC_W + x] =
-        fb->buf[src_y * CAM_W + src_x];
+      this->procFrame[y * PROC_W + x] =
+      fb->buf[src_y * CAM_W + src_x];
     }
   }
 
@@ -88,7 +85,7 @@ void uMotion::update() {
   else
     calculateDifference();
 
-  memcpy(prevFrame, procFrame, PROC_W * PROC_H);
+  memcpy(prevFrame, this->procFrame, PROC_W * PROC_H);
   esp_camera_fb_return(fb);
 
   unsigned long t1 = micros();
@@ -104,7 +101,7 @@ void uMotion::update() {
       "[μMotion] fps=%.2f, latency=%lu us, heap=%u, psram=%u\n",
       fps, latency,
       (unsigned)ESP.getFreeHeap(),
-      (unsigned)ESP.getFreePsram()
+                  (unsigned)ESP.getFreePsram()
     );
     frame_count = 0;
     t_last_log = millis();
@@ -115,7 +112,7 @@ void uMotion::calculateDifference() {
   for (int y = 0; y < PROC_H; y++) {
     for (int x = 0; x < PROC_W; x++) {
       int idx = y * PROC_W + x;
-      if (abs(procFrame[idx] - prevFrame[idx]) > threshold) {
+      if (abs(this->procFrame[idx] - prevFrame[idx]) > threshold) {
         motion_pixels++;
       }
     }
@@ -129,7 +126,7 @@ void uMotion::printRawDiff() {
   for (int y = 0; y < PROC_H; y++) {
     for (int x = 0; x < PROC_W; x++) {
       int idx = y * PROC_W + x;
-      if (abs(procFrame[idx] - prevFrame[idx]) > threshold)
+      if (abs(this->procFrame[idx] - prevFrame[idx]) > threshold)
         Serial.print(".");
       else
         Serial.print(" ");
