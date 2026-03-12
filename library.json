@@ -1,0 +1,37 @@
+{
+  "name": "uMotion",
+  "version": "1.0.0",
+  "description": "Lightweight motion control library for embedded systems supporting smooth acceleration, velocity control and position tracking.",
+  "keywords": [
+    "motion",
+    "control",
+    "motor",
+    "robotics",
+    "trajectory",
+    "embedded"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/roboticist-blip/uMotion.git"
+  },
+  "authors": [
+    {
+      "name": "roboticist-blip",
+      "maintainer": true
+    }
+  ],
+  "license": "MIT",
+  "frameworks": [
+    "arduino",
+    "espidf"
+  ],
+  "platforms": [
+    "espressif32",
+    "atmelsam",
+    "ststm32",
+    "atmelavr"
+  ],
+  "headers": [
+    "uMotion.h"
+  ]
+}
