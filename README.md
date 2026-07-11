@@ -32,3 +32,20 @@ OpenCV is a general-purpose computer vision library.
 Built for the edge. Faster than OpenCV.
 
 Open for contributions and test !
+
+---
+
+##Citations
+The Work is Published in the IEEE Conference, You can access it:
+```bash
+@INPROCEEDINGS{11594222,
+  author={Maheshwari, Sumit and Kumar, Surendra and Chauhan, Nitin Kumar and Jain, Ankit},
+  booktitle={2026 IEEE 18th International Conference on Computational Intelligence and Communication Networks (CICN)}, 
+  title={A Resource-Constrained Implementation and Characterization of Per-Pixel Motion Detection on Low-Power Embedded Vision Systems}, 
+  year={2026},
+  volume={},
+  number={},
+  pages={927-931},
+  keywords={Memory;Error analysis;Lighting;Printing;Testing;Timing;Pixel;Cameras;Motion detection;Algorithms;Embedded vision;Frame differencing;ESP32-S3;Motion detection;Edge computing;Resource constraints},
+  doi={10.1109/CICN70047.2026.11594222}}
+```
